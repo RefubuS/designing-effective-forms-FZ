@@ -1,6 +1,7 @@
 let clickCount = 0;
 
 const countryInput = document.getElementById('country');
+const countryCodeInput = document.getElementById('countryCode');
 const myForm = document.getElementById('form');
 const modal = document.getElementById('form-feedback-modal');
 const clicksInfo = document.getElementById('click-count');
@@ -29,7 +30,9 @@ function getCountryByIP() {
         .then(response => response.json())
         .then(data => {
             const country = data.country;
-            // TODO inject country to form and call getCountryCode(country) function
+            console.log("Kraj z adresu IP:", country);
+            countryInput.value = country;
+            getCountryCode(country);
         })
         .catch(error => {
             console.error('Błąd pobierania danych z serwera GeoJS:', error);
@@ -48,17 +51,37 @@ function getCountryCode(countryName) {
     })
     .then(data => {        
         const countryCode = data[0].idd.root + data[0].idd.suffixes.join("")
-        // TODO inject countryCode to form
+        console.log("Kod kierunkowy dla", countryName, "to:", countryCode);
+        countryCodeInput.value = countryCode;
     })
     .catch(error => {
         console.error('Wystąpił błąd:', error);
     });
 }
 
+$(document).ready(function() {
+    // Inicjalizacja Select2
+    $('#country').select2({
+        placeholder: 'Wybierz lub wpisz kraj',
+        allowClear: true
+    });
+});
 
 (() => {
     // nasłuchiwania na zdarzenie kliknięcia myszką
     document.addEventListener('click', handleClick);
 
-    fetchAndFillCountries();
+    document.addEventListener('keydown', function(event) {
+        if (event.key === "Enter") {
+            // Znajdź przycisk "submit" w formularzu i wyślij formularz
+            const form = document.getElementById('form');
+            if (form) {
+                form.submit();
+            }
+        }
+    });
+
+    fetchAndFillCountries().then(() => {
+        getCountryByIP();
+    });
 })()
