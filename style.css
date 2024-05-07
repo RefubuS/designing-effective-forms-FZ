@@ -1,3 +1,15 @@
 .modal {
     background: #c6d0ff7a;
 }
+#form {
+    display: flex;
+    flex-direction: column;
+    width: 600px; /* Default width */
+}
+
+/* Media query for adjusting width at a certain window size */
+@media (max-width: 600px) {
+    #form {
+        width: 100%; /* Adjusts width to 100% when window size is 600px or less */
+    }
+}

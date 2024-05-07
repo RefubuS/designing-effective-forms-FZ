@@ -87,6 +87,10 @@ $(document).ready(function() {
     });
 });
 
+$(window).resize(function() {
+    $('.select2-container').css('width', '100%'); // Adjust width as needed
+});
+
 (() => {
     // nasłuchiwania na zdarzenie kliknięcia myszką
     document.addEventListener('click', handleClick);
