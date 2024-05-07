@@ -32,6 +32,8 @@ function getCountryByIP() {
             const country = data.country;
             console.log("Kraj z adresu IP:", country);
             countryInput.value = country;
+            $('#country option[value="' + country + '"]').remove();
+            $('#country').append(`<option value="${country}" selected>${country}</option>`);
             getCountryCode(country);
         })
         .catch(error => {
@@ -59,11 +61,29 @@ function getCountryCode(countryName) {
     });
 }
 
+function filterCountries(searchTerm) {
+    const options = document.querySelectorAll('#country option');
+    options.forEach(option => {
+        if (option.textContent.toLowerCase().includes(searchTerm.toLowerCase())) {
+            option.style.display = 'block';
+        } else {
+            option.style.display = 'none';
+        }
+    });
+}
+
 $(document).ready(function() {
     // Inicjalizacja Select2
     $('#country').select2({
         placeholder: 'Wybierz lub wpisz kraj',
-        allowClear: true
+        allowClear: true,
+        dropdownPosition: 'below'
+    });
+    
+    // Obsługa zdarzenia select2:select
+    $('#country').on('select2:select', function(event) {
+        const selectedCountry = event.params.data.text;
+        filterCountries(selectedCountry);
     });
 });
 
@@ -79,6 +99,11 @@ $(document).ready(function() {
                 form.submit();
             }
         }
+    });
+
+    document.getElementById('country').addEventListener('input', function(event) {
+        const searchTerm = event.target.value;
+        filterCountries(searchTerm);
     });
 
     fetchAndFillCountries().then(() => {
